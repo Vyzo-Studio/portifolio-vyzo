@@ -14,9 +14,10 @@ window.addEventListener('scroll',onScroll,{passive:true});onScroll();
 $('#year').textContent=String(new Date().getFullYear());
 const menuToggle=$('#menu-toggle'),mobileMenu=$('#mobile-menu');
 function closeMenu(){menuToggle.setAttribute('aria-expanded','false');menuToggle.setAttribute('aria-label','Abrir menu');mobileMenu.hidden=true}
-menuToggle.addEventListener('click',()=>{const isOpen=menuToggle.getAttribute('aria-expanded')==='true';menuToggle.setAttribute('aria-label',isOpen?'Abrir menu':'Fechar menu');menuToggle.setAttribute('aria-expanded',String(!isOpen));mobileMenu.hidden=isOpen;});
+menuToggle.addEventListener('click',()=>{const isOpen=menuToggle.getAttribute('aria-expanded')==='true';menuToggle.setAttribute('aria-expanded',String(!isOpen));menuToggle.setAttribute('aria-label',isOpen?'Abrir menu':'Fechar menu');mobileMenu.hidden=isOpen;});
 $$('.mobile-menu a').forEach(a=>a.addEventListener('click',closeMenu));
 window.addEventListener('resize',()=>{if(innerWidth>1000)closeMenu()},{passive:true});
+// Semantic services from the single content source.
 const serviceGrid=$('#services-grid');
 data.services.forEach(s=>{
  const card=el('article','service-card');card.dataset.reveal='';
@@ -28,6 +29,7 @@ data.services.forEach(s=>{
  card.append(top,title,desc,tags,button);serviceGrid.append(card);
 });
 const allCount=document.querySelector('.filter[data-filter="todos"] span');if(allCount)allCount.textContent=String(data.projects.length).padStart(2,'0');
+// Projects. Real site links and locally preserved actual imagery only.
 const grid=$('#project-grid');
 function makeImage(src,alt){const img=el('img');img.src=src;img.alt=alt;img.loading='lazy';img.decoding='async';img.onerror=()=>{img.hidden=true;const fallback=img.parentElement?.querySelector('.media-fallback');if(fallback)fallback.style.display='flex'};return img}
 function renderProjects(){grid.replaceChildren();const filtered=data.projects.filter(p=>state.filter==='todos'||p.filter.includes(state.filter));
@@ -48,6 +50,7 @@ function observeReveals(){if(window.matchMedia('(prefers-reduced-motion: reduce)
  if(!observer)observer=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting){e.target.classList.add('in-view');observer.unobserve(e.target)}},{threshold:.08,rootMargin:'0px 0px -22px 0px'});
  $$('[data-reveal]:not(.in-view)').forEach(n=>observer.observe(n));
 }
+// Project case study dialog and gallery.
 const backdrop=$('#case-modal'),modal=$('.modal',backdrop),modalContent=$('#modal-content'),modalClose=$('#modal-close');
 function getFocusable(){return $$('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled])',modal).filter(n=>n.getClientRects().length>0)}
 function openProject(id,trigger){const p=data.projects.find(item=>item.id===id);if(!p)return;
@@ -62,7 +65,9 @@ function openProject(id,trigger){const p=data.projects.find(item=>item.id===id);
 function closeProject(){if(backdrop.hidden)return;backdrop.hidden=true;document.body.classList.remove('modal-open');state.activeProject=null;state.modalTrigger?.focus();}
 modalClose.addEventListener('click',closeProject);backdrop.addEventListener('click',e=>{if(e.target===backdrop)closeProject()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!backdrop.hidden)closeProject();else closeMenu()}if(e.key==='Tab'&&!backdrop.hidden){const nodes=getFocusable();if(!nodes.length)return;const first=nodes[0],last=nodes[nodes.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}});
+// Premium motion, progressively enhanced and disability-aware.
 const tilt=$('#hero-tilt');if(tilt&&window.matchMedia('(pointer:fine) and (prefers-reduced-motion:no-preference)').matches){const visual=$('.hero-visual');visual.addEventListener('pointermove',e=>{const r=visual.getBoundingClientRect();let x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;tilt.style.transform=`rotateY(${(-15+x*9).toFixed(1)}deg) rotateX(${(8-y*8).toFixed(1)}deg) rotateZ(1deg)`});visual.addEventListener('pointerleave',()=>tilt.style.transform='rotateY(-15deg) rotateX(8deg) rotateZ(1deg)')}
+// Non-submitting inquiry: keeps personal information exclusively in current browser form.
 const form=$('#project-form'),feedback=$('#form-feedback'),textPreview=$('#brief-preview'),hint=$('#form-hint');
 function validateForm(){let firstBad=null;for(const field of $$('[required]',form)){const value=field.value.trim();let valid=value.length>0;if(field.id==='client-name')valid=value.length>=2;if(field.id==='project-description')valid=value.length>=10;field.setAttribute('aria-invalid',String(!valid));if(!valid&&!firstBad)firstBad=field}if(firstBad){firstBad.focus();hint.textContent='Preencha os campos obrigatórios. A descrição precisa ter pelo menos 10 caracteres.';hint.style.color='#ff9fae';return false}hint.textContent='Seu briefing está pronto para ser preparado.';hint.style.color='';return true}
 form.addEventListener('input',e=>{if(e.target.matches('input,textarea,select'))e.target.removeAttribute('aria-invalid')});
@@ -78,7 +83,9 @@ form.addEventListener('submit',e=>{e.preventDefault();if(!validateForm())return;
 async function copyBrief(){if(!state.brief)return;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(state.brief)}else{ textPreview.focus();textPreview.select();const ok=document.execCommand('copy');if(!ok)throw new Error('Cópia não disponível')}showToast('Briefing copiado! Agora envie pelo Direct.');$('#copy-brief').textContent='Copiado ✓'}catch(error){textPreview.focus();textPreview.select();showToast('Selecione e copie o texto do briefing manualmente.')}}
 $('#copy-brief').addEventListener('click',copyBrief);
 function showToast(text){const toast=$('#toast');toast.textContent=text;toast.hidden=false;clearTimeout(state.toastTimer);state.toastTimer=setTimeout(()=>toast.hidden=true,3600)}
+// Initialize only after all stateful declarations and dialog elements exist.
 renderProjects();
 observeReveals();
+// Active navigation on scroll.
 if('IntersectionObserver' in window){const watch=['sobre','servicos','portfolio','processo','contato'].map(id=>document.getElementById(id));const navigationObserver=new IntersectionObserver(entries=>{for(const entry of entries)if(entry.isIntersecting){$$('.desktop-nav a').forEach(a=>a.classList.toggle('active',a.hash==='#'+entry.target.id))}},{rootMargin:'-20% 0px -65% 0px'});watch.forEach(node=>node&&navigationObserver.observe(node))}
 })();

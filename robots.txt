@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://vyzo-studio.github.io/portifolio-vyzo/sitemap.xml

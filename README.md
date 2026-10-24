@@ -1,36 +1,33 @@
-# VYZO Studio — Site oficial de portfólio
+# VYZO Studio — Portfólio comercial interativo
 
-Site comercial responsivo, desenvolvido com HTML, CSS e JavaScript sem etapa de compilação.
-
-## Executar
-
-Abra `index.html` no navegador ou hospede a pasta em qualquer servidor estático:
-
-```bash
-python -m http.server 8080
-```
-
-Acesse `http://localhost:8080`.
-
-## Funcionalidades
-
-- Navegação responsiva, menu mobile e seções integradas.
-- Direção visual baseada na logomarca oficial anexada, com cores violeta e azul.
-- Catálogo interativo de quatro frentes de serviços.
-- Seis entradas de portfólio: GNG, HAUS Barber, Luence Space, identidade da VYZO, apresentação comercial GNG e campanha VYZO.
-- Filtros de projetos; modal com escopo, imagens e links oficiais quando disponíveis.
-- Timeline de processo e vitrine funcional de solução digital.
-- Formulário com validação local, resumo copiável e acesso ao Instagram Direct (não envia dados automaticamente).
-- Privacidade e termos de uso, SEO básico, acessibilidade de teclado, opção de movimento reduzido.
-
-## Atualizar conteúdo
-
-Em `data.js`, ajuste `services`, `projects`, `process` ou `benefits` sem repetir informação no HTML. O caminho de cada imagem e cada link externo estão por projeto.
+Site oficial com identidade visual da VYZO Studio e portfólio de projetos reais.
 
 ## Publicação
 
-Para uma presença oficial, utilize um repositório independente (como `vyzo-studio-site`) e habilite o GitHub Pages na branch principal, usando a pasta raiz. Como a aplicação é estática, não precisa de Vite, Node nem banco de dados.
+Repositório: https://github.com/Vyzo-Studio/portifolio-vyzo
 
-## Transparência
+Endereço GitHub Pages (quando o deployment estiver concluído): https://vyzo-studio.github.io/portifolio-vyzo/
 
-As capturas da GNG vieram de uma apresentação comercial anterior de propriedade do usuário e podem representar uma versão anterior do site. Os projetos HAUS e Luence usam mídias públicas originais publicadas pelos respectivos projetos, não capturas de tela simuladas. Alguns recursos remotos dependem de acesso à internet. Nenhuma taxa de conversão, avaliação, depoimento ou resultado financeiro de clientes foi inventado.
+O workflow `.github/workflows/pages.yml` publica o conteúdo estático diretamente após alterações na branch `main`.
+
+Se a primeira execução de GitHub Actions solicitar habilitação do Pages: `Settings → Pages → Build and deployment → Source: GitHub Actions`. O arquivo YAML já está configurado para isso.
+
+## Estrutura
+
+- `index.html`: página principal com serviços, portfólio, cases e briefing.
+- `styles.css`: design system, layout responsivo e animações.
+- `data.js`: lista editável de projetos e serviços.
+- `app.js`: interações, filtros, detalhes e fluxo de briefing.
+- `assets/`: logo oficial fornecida e imagens preservadas.
+- `privacidade.html` e `termos.html`: informações legais.
+- `QA.md`: testes realizados, verificações e limitações.
+
+## Alterações de conteúdo
+
+Atualize os objetos de projetos e serviços em `data.js`. Não há backend de envio de mensagens: o formulário prepara um resumo que a pessoa copia e envia pelo Instagram Direct.
+
+Requisitos locais: navegador moderno; não precisa Node.js nem bibliotecas de build.
+
+## Observações
+
+Não foram adicionadas métricas inventadas nem depoimentos. Os projetos HAUS, GNG e Luence são referenciados pelos links públicos dos projetos.

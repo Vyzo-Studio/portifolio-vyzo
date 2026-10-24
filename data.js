@@ -1,4 +1,4 @@
-/* VYZO Studio — conteúdo editável dos serviços e cases reais. */
+/* Conteúdo centralizado: substitua/adicone projetos reais aqui. Sem métricas fictícias. */
 window.VYZO_DATA = Object.freeze({
   contact:{profile:'https://www.instagram.com/vyzo_std/',direct:'https://ig.me/m/vyzo_std',handle:'@vyzo_std'},
   services:[
