@@ -1,33 +1,37 @@
-# VYZO Studio — Portfólio comercial interativo
+# VYZO Studio — Site oficial e portfólio autoral
 
-Site oficial com identidade visual da VYZO Studio e portfólio de projetos reais.
+Repositório público do site oficial da VYZO Studio, disponível em:
+https://vyzo-studio.github.io/portifolio-vyzo/
 
-## Publicação
+## Política de divulgação
 
-Repositório: https://github.com/Vyzo-Studio/portifolio-vyzo
-
-Endereço GitHub Pages (quando o deployment estiver concluído): https://vyzo-studio.github.io/portifolio-vyzo/
-
-O workflow `.github/workflows/pages.yml` publica o conteúdo estático diretamente após alterações na branch `main`.
-
-Se a primeira execução de GitHub Actions solicitar habilitação do Pages: `Settings → Pages → Build and deployment → Source: GitHub Actions`. O arquivo YAML já está configurado para isso.
+Este site exibe **somente trabalhos próprios da VYZO e estudos conceituais claramente identificados**.
+Projetos de clientes não são publicados sem autorização expressa de divulgação.
+Não incluir marcas, nomes, imagens, capturas, apresentações comerciais, arquivos ou links de clientes sem essa permissão.
 
 ## Estrutura
 
-- `index.html`: página principal com serviços, portfólio, cases e briefing.
-- `styles.css`: design system, layout responsivo e animações.
-- `data.js`: lista editável de projetos e serviços.
-- `app.js`: interações, filtros, detalhes e fluxo de briefing.
-- `assets/`: logo oficial fornecida e imagens preservadas.
-- `privacidade.html` e `termos.html`: informações legais.
-- `QA.md`: testes realizados, verificações e limitações.
+- `index.html`: apresentação comercial, catálogo de serviços, portfólio autoral e briefing.
+- `styles.css`: linguagem visual premium e layout responsivo.
+- `data.js`: serviços, itens do portfólio e notas transparentes de cada case.
+- `app.js`: filtros, modal com detalhes, menu, animações e briefing.
+- `assets/`: identidade oficial da VYZO e previews gráficos próprios.
+- `privacidade.html` / `termos.html`: páginas de informação ao visitante.
+- `QA.md`: checklist e limitações de testes.
 
-## Alterações de conteúdo
+## Sobre os cases
 
-Atualize os objetos de projetos e serviços em `data.js`. Não há backend de envio de mensagens: o formulário prepara um resumo que a pessoa copia e envia pelo Instagram Direct.
+- Identidade, campanha e website: projetos da própria VYZO.
+- Apresentação visual: **estudo autoral demonstrativo**, não realizado para cliente.
+- A prévia gráfica do website e a apresentação são ilustrativas, não screenshots nem indicadores reais.
+- Não há depoimentos, estatísticas, certificações ou clientes inventados.
 
-Requisitos locais: navegador moderno; não precisa Node.js nem bibliotecas de build.
+## Contato
 
-## Observações
+O formulário prepara um resumo textual; o usuário o copia e abre o Instagram Direct.
+Não existe envio automático a um servidor nem armazenagem de briefing pelo site.
 
-Não foram adicionadas métricas inventadas nem depoimentos. Os projetos HAUS, GNG e Luence são referenciados pelos links públicos dos projetos.
+## Publicação
+
+O workflow `.github/workflows/pages.yml` publica o site estático da branch `main`.
+GitHub Pages deve estar configurado para publicar via **GitHub Actions**.

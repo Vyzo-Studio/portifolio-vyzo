@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" role="img" aria-labelledby="title desc">
+<title id="title">VYZO Studio — Prévia gráfica de interface</title><desc id="desc">Representação editorial do site autoral VYZO Studio, não uma captura de tela.</desc>
+<defs>
+<linearGradient id="bg" x2="1" y2="1"><stop stop-color="#12162a"/><stop offset="1" stop-color="#050812"/></linearGradient>
+<linearGradient id="accent" x1="0" x2="1"><stop stop-color="#bd50f9"/><stop offset=".52" stop-color="#7548fa"/><stop offset="1" stop-color="#2582fa"/></linearGradient>
+<radialGradient id="halo"><stop stop-color="#6241ff" stop-opacity=".55"/><stop offset="1" stop-color="#6241ff" stop-opacity="0"/></radialGradient>
+<filter id="blur"><feGaussianBlur stdDeviation="24"/></filter>
+</defs>
+<rect width="1280" height="800" fill="#080b16"/>
+<circle cx="970" cy="382" r="385" fill="url(#halo)"/>
+<circle cx="1160" cy="710" r="380" fill="#256aff" opacity=".13" filter="url(#blur)"/>
+<rect x="72" y="74" width="1136" height="650" rx="26" fill="url(#bg)" stroke="#7970ad" stroke-opacity=".7" stroke-width="2"/>
+<path d="M72 147 H1208" stroke="#414361" stroke-width="2"/>
+<circle cx="116" cy="111" r="7" fill="#bc69f9"/><circle cx="140" cy="111" r="7" fill="#566af9"/><circle cx="164" cy="111" r="7" fill="#435072"/>
+<text x="210" y="118" fill="#bbc2de" font-family="Arial,sans-serif" font-size="17" letter-spacing="3">VYZO STUDIO  /  SITE OFICIAL</text>
+<text x="1132" y="117" text-anchor="end" fill="#bec4dc" font-family="Arial" font-size="20">↗</text>
+<g transform="translate(115 190)">
+<text x="0" y="0" font-family="Arial,sans-serif" font-weight="900" font-size="62" letter-spacing="-5" fill="#fff">V</text>
+<text x="44" y="0" font-family="Arial,sans-serif" font-weight="900" font-size="62" letter-spacing="-5" fill="url(#accent)">Y</text>
+<text x="91" y="0" font-family="Arial,sans-serif" font-weight="900" font-size="62" letter-spacing="-5" fill="#fff">ZO</text>
+<text x="0" y="53" fill="#b5b7cc" font-family="Arial,sans-serif" letter-spacing="5" font-size="14">DESIGN E TECNOLOGIA</text>
+<text x="0" y="162" fill="#fff" font-family="Arial,sans-serif" font-weight="800" font-size="62" letter-spacing="-3">Design que</text>
+<text x="0" y="230" fill="#fff" font-family="Arial,sans-serif" font-weight="800" font-size="62" letter-spacing="-3">impressiona.</text>
+<text x="0" y="300" fill="url(#accent)" font-family="Arial,sans-serif" font-weight="800" font-size="62" letter-spacing="-3">Tecnologia que</text>
+<text x="0" y="366" fill="url(#accent)" font-family="Arial,sans-serif" font-weight="800" font-size="62" letter-spacing="-3">transforma.</text>
+<text x="2" y="413" fill="#b9bcd5" font-family="Arial,sans-serif" font-size="20">Identidade, comunicação e experiências digitais.</text>
+<rect x="0" y="446" rx="12" width="237" height="59" fill="url(#accent)"/>
+<text x="119" y="484" text-anchor="middle" font-family="Arial" font-size="20" font-weight="700" fill="#fff">Solicitar um projeto ↗</text>
+</g>
+<g transform="translate(815 260) rotate(7)">
+<rect x="0" y="0" width="292" height="355" rx="23" fill="#141a39" stroke="#9386e7" stroke-width="2"/>
+<rect x="25" y="32" width="242" height="115" rx="17" fill="#1f164a"/>
+<circle cx="150" cy="89" r="66" fill="none" stroke="url(#accent)" stroke-width="24"/>
+<rect x="28" y="172" width="172" height="16" rx="8" fill="#e9e9fc"/><rect x="28" y="200" width="227" height="8" rx="4" fill="#7782b0"/><rect x="28" y="220" width="192" height="8" rx="4" fill="#7782b0"/>
+<rect x="28" y="270" width="100" height="49" rx="10" fill="#4f39b3"/><rect x="145" y="270" width="115" height="49" rx="10" fill="#1e3c83"/>
+</g>
+<path d="M779 690 H1104" stroke="url(#accent)" stroke-width="3"/>
+</svg>

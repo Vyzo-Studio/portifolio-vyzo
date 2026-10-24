@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" role="img" aria-labelledby="title desc">
+<title id="title">Apresentação conceitual VYZO Studio</title><desc id="desc">Estudo editorial de apresentação com gráfico puramente ilustrativo, sem dados comerciais.</desc>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0d1121"/><stop offset=".55" stop-color="#171332"/><stop offset="1" stop-color="#0a132d"/></linearGradient>
+<linearGradient id="a" x2="1"><stop stop-color="#bb47f6"/><stop offset=".55" stop-color="#8049fd"/><stop offset="1" stop-color="#2287fb"/></linearGradient>
+<linearGradient id="bar" x2="0" y2="1"><stop stop-color="#9e55ff"/><stop offset="1" stop-color="#255eee"/></linearGradient>
+<radialGradient id="sphere"><stop stop-color="#5a3ee7" stop-opacity=".4"/><stop offset="1" stop-color="#2c46d9" stop-opacity="0"/></radialGradient></defs>
+<rect width="1280" height="800" fill="#070910"/>
+<rect x="65" y="60" width="1150" height="680" rx="25" fill="url(#bg)" stroke="#7362b1" stroke-width="2"/>
+<circle cx="1100" cy="230" r="330" fill="url(#sphere)"/>
+<path d="M125 160 H1155" stroke="#58567a" stroke-opacity=".7" stroke-width="2"/>
+<text x="125" y="125" fill="#fff" font-family="Arial" font-size="30" font-weight="900" letter-spacing="-1">V<tspan fill="#ae5dfb">Y</tspan>ZO</text>
+<text x="325" y="122" fill="#b5b2d4" font-family="Arial" font-size="17" letter-spacing="3">ESTUDO VISUAL AUTORAL</text>
+<text x="125" y="290" fill="#fff" font-family="Arial" font-weight="800" font-size="83" letter-spacing="-4">Ideias que</text>
+<text x="125" y="388" fill="url(#a)" font-family="Arial" font-weight="800" font-size="83" letter-spacing="-4">ganham forma.</text>
+<text x="130" y="449" fill="#ccd0e7" font-family="Arial" font-size="24">A informação encontra clareza, estrutura e intenção.</text>
+<rect x="126" y="503" width="388" height="107" rx="15" fill="#171d37" stroke="#6757a8" stroke-opacity=".7"/>
+<text x="153" y="542" fill="#d1a5ff" font-family="Arial" font-size="16" font-weight="700" letter-spacing="2">COMUNICAÇÃO</text>
+<text x="153" y="576" fill="#fff" font-family="Arial" font-size="25" font-weight="700">Conteúdo que faz sentido.</text>
+<g transform="translate(745 272)">
+<rect x="0" y="0" width="390" height="347" rx="18" fill="#10172e" stroke="#545792"/>
+<text x="26" y="46" fill="#eef0ff" font-family="Arial" font-size="22" font-weight="700">Composição visual</text>
+<text x="26" y="72" fill="#969dbd" font-family="Arial" font-size="14">FORMAS E HIERARQUIA · EXEMPLO</text>
+<path d="M27 274 H357 M27 206 H357 M27 138 H357" stroke="#38405e" stroke-dasharray="5 9"/>
+<rect x="50" y="198" width="43" height="76" rx="8" fill="url(#bar)"/>
+<rect x="119" y="164" width="43" height="110" rx="8" fill="url(#bar)"/>
+<rect x="188" y="125" width="43" height="149" rx="8" fill="url(#bar)"/>
+<rect x="257" y="91" width="43" height="183" rx="8" fill="url(#bar)"/>
+<path d="M36 317 H340" stroke="url(#a)" stroke-width="3"/>
+</g>
+<text x="127" y="687" fill="#8f95b5" font-family="Arial" font-size="16" letter-spacing="2">EXEMPLO CONCEITUAL · SEM MÉTRICAS REAIS</text>
+</svg>

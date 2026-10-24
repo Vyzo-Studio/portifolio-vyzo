@@ -28,8 +28,7 @@ data.services.forEach(s=>{
  button.addEventListener('click',()=>{const select=$('#project-type');select.value=s.preselect;document.getElementById('contato').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});setTimeout(()=>select.focus({preventScroll:true}),500)});
  card.append(top,title,desc,tags,button);serviceGrid.append(card);
 });
-const allCount=document.querySelector('.filter[data-filter="todos"] span');if(allCount)allCount.textContent=String(data.projects.length).padStart(2,'0');
-// Projects. Real site links and locally preserved actual imagery only.
+// Projetos próprios e estudos autorais públicos; nenhuma marca de cliente.
 const grid=$('#project-grid');
 function makeImage(src,alt){const img=el('img');img.src=src;img.alt=alt;img.loading='lazy';img.decoding='async';img.onerror=()=>{img.hidden=true;const fallback=img.parentElement?.querySelector('.media-fallback');if(fallback)fallback.style.display='flex'};return img}
 function renderProjects(){grid.replaceChildren();const filtered=data.projects.filter(p=>state.filter==='todos'||p.filter.includes(state.filter));
@@ -37,8 +36,8 @@ function renderProjects(){grid.replaceChildren();const filtered=data.projects.fi
  const card=el('article','project-card');card.dataset.project=p.id;card.dataset.reveal='';
  const trigger=el('button','project-media');trigger.type='button';trigger.setAttribute('aria-label',`Ver detalhes do projeto ${p.title}`);trigger.style.width='100%';trigger.style.border='0';trigger.style.padding='0';trigger.style.textAlign='left';trigger.style.cursor='pointer';
  const img=makeImage(p.cover,p.alt);const fallback=el('span','media-fallback');fallback.style.setProperty('--fall',p.color);fallback.append(el('span','','VYZO / PROJETOS'),el('strong','',p.title));
- const open=el('span','project-open-icon','↗');open.setAttribute('aria-hidden','true');trigger.append(img,fallback,open);trigger.addEventListener('click',()=>openProject(p.id,trigger));
- const info=el('div','project-info');const copy=el('div');copy.append(el('div','cat',p.category.toUpperCase()),el('h3','',p.title),el('p','',p.caption));const btn=el('button','case-link','↗');btn.type='button';btn.setAttribute('aria-label',`Abrir projeto ${p.title}`);btn.addEventListener('click',()=>openProject(p.id,btn));info.append(copy,btn);card.append(trigger,info);grid.append(card);
+ const open=el('span','project-open-icon','↗');open.setAttribute('aria-hidden','true');const label=el('span','project-label',p.label);trigger.append(img,fallback,label,open);trigger.addEventListener('click',()=>openProject(p.id,trigger));
+ const info=el('div','project-info');const copy=el('div');copy.append(el('div','cat',p.category.toUpperCase()),el('h3','',p.title),el('p','',p.caption),el('div','project-auth',p.status));const btn=el('button','case-link','↗');btn.type='button';btn.setAttribute('aria-label',`Abrir projeto ${p.title}`);btn.addEventListener('click',()=>openProject(p.id,btn));info.append(copy,btn);card.append(trigger,info);grid.append(card);
  });
  observeReveals();
 }
