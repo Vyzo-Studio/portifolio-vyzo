@@ -21,7 +21,7 @@ window.addEventListener('resize',()=>{if(innerWidth>1000)closeMenu()},{passive:t
 const serviceGrid=$('#services-grid');
 data.services.forEach(s=>{
  const card=el('article','service-card');card.dataset.reveal='';
- const top=el('div','service-top');top.append(el('span','service-icon',s.icon),el('span','service-count',s.number+' / 04'));
+ const top=el('div','service-top');top.append(el('span','service-icon',s.icon));
  const title=el('h3','',s.title),desc=el('p','',s.description),tags=el('div','service-tags');
  s.tags.forEach(tag=>tags.append(el('span','',tag)));
  const button=el('button','service-action');button.type='button';button.append(el('span','',`Quero este serviço`),el('span','','↗'));
@@ -37,13 +37,13 @@ function renderProjects(){grid.replaceChildren();const filtered=data.projects.fi
  const card=el('article','project-card');card.dataset.project=p.id;card.dataset.reveal='';
  const trigger=el('button','project-media');trigger.type='button';trigger.setAttribute('aria-label',`Ver detalhes do projeto ${p.title}`);trigger.style.width='100%';trigger.style.border='0';trigger.style.padding='0';trigger.style.textAlign='left';trigger.style.cursor='pointer';
  const img=makeImage(p.cover,p.alt);const fallback=el('span','media-fallback');fallback.style.setProperty('--fall',p.color);fallback.append(el('span','','VYZO / PROJETOS'),el('strong','',p.title));
- const number=el('span','project-number',p.number+' / PROJETO'),open=el('span','project-open-icon','↗');open.setAttribute('aria-hidden','true');trigger.append(img,fallback,number,open);trigger.addEventListener('click',()=>openProject(p.id,trigger));
+ const open=el('span','project-open-icon','↗');open.setAttribute('aria-hidden','true');trigger.append(img,fallback,open);trigger.addEventListener('click',()=>openProject(p.id,trigger));
  const info=el('div','project-info');const copy=el('div');copy.append(el('div','cat',p.category.toUpperCase()),el('h3','',p.title),el('p','',p.caption));const btn=el('button','case-link','↗');btn.type='button';btn.setAttribute('aria-label',`Abrir projeto ${p.title}`);btn.addEventListener('click',()=>openProject(p.id,btn));info.append(copy,btn);card.append(trigger,info);grid.append(card);
  });
  observeReveals();
 }
 $$('.filter').forEach(btn=>btn.addEventListener('click',()=>{state.filter=btn.dataset.filter;$$('.filter').forEach(b=>{const active=b===btn;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});renderProjects();}));
-const proc=$('#process-list');data.process.forEach(step=>{const item=el('article','process-item');item.dataset.reveal='';item.append(el('span','stage-number',step.number),el('h3','',step.name),el('p','',step.text),el('span','stage-arrow','↗'));proc.append(item)});
+const proc=$('#process-list');data.process.forEach(step=>{const item=el('article','process-item');item.dataset.reveal='';item.append(el('h3','',step.name),el('p','',step.text),el('span','stage-arrow','↗'));proc.append(item)});
 const benefits=$('#benefits');data.benefits.forEach(benefit=>{const card=el('article','benefit-card');card.dataset.reveal='';card.append(el('span','benefit-mark',benefit.icon),el('h3','',benefit.title),el('p','',benefit.text));benefits.append(card)});
 let observer;
 function observeReveals(){if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){$$('[data-reveal]').forEach(n=>n.classList.add('in-view'));return}if(!('IntersectionObserver' in window)){$$('[data-reveal]').forEach(n=>n.classList.add('in-view'));return}
