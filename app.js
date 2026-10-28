@@ -125,6 +125,7 @@ document.addEventListener('focusin',event=>{
 if(motionPreference.addEventListener)motionPreference.addEventListener('change',initializeReveals);
 if(motionButton)motionButton.addEventListener('click',()=>{
  motionOverride=true;
+ document.documentElement.classList.add('motion-opt-in');
  // Content already encountered must not disappear when opting in.
  const limit=window.innerHeight;
  allRevealTargets().forEach(node=>{
