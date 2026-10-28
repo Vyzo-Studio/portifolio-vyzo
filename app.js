@@ -44,80 +44,97 @@ function renderProjects(){grid.replaceChildren();const filtered=data.projects.fi
 $$('.filter').forEach(btn=>btn.addEventListener('click',()=>{state.filter=btn.dataset.filter;$$('.filter').forEach(b=>{const active=b===btn;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});renderProjects();}));
 const proc=$('#process-list');data.process.forEach(step=>{const item=el('article','process-item');item.dataset.reveal='';item.dataset.revealId='process:'+step.name;item.append(el('h3','',step.name),el('p','',step.text),el('span','stage-arrow','↗'));proc.append(item)});
 const benefits=$('#benefits');data.benefits.forEach(benefit=>{const card=el('article','benefit-card');card.dataset.reveal='';card.dataset.revealId='benefit:'+benefit.title;card.append(el('span','benefit-mark',benefit.icon),el('h3','',benefit.title),el('p','',benefit.text));benefits.append(card)});
-// VYZO Cinematic Reveal: elementos revelados jamais retornam ao estado inicial.
-const revealMedia=window.matchMedia('(prefers-reduced-motion: reduce)');
-const revealedKeys=new Set();
-const pendingReveals=new Set();
+// VYZO Cinematic Scroll — gatilho mais visível, execução única e acessível.
+const motionPreference=window.matchMedia('(prefers-reduced-motion: reduce)');
+const permanentlyRevealed=new Set();
+const pendingRevealNodes=new Set();
+const motionButton=$('#enable-motion');
+let motionOverride=false;
 let revealObserver=null;
-let revealScanFrame=0;
-function revealElement(node){
- if(!node || !node.isConnected)return;
+let revealFrame=0;
+const animationAllowed=()=>!motionPreference.matches||motionOverride;
+const allRevealTargets=()=>$$('[data-reveal]');
+function revealDone(node){
+ if(!node||!node.isConnected)return;
  const key=node.dataset.revealId;
- if(key)revealedKeys.add(key);
- node.dataset.revealState='revealed';
+ if(key)permanentlyRevealed.add(key);
+ node.dataset.revealState='done';
  node.classList.add('in-view');
- pendingReveals.delete(node);
- if(revealObserver)revealObserver.unobserve(node);
+ pendingRevealNodes.delete(node);
+ revealObserver?.unobserve(node);
 }
-function revealStaggers(){
- const groups=[['#services-grid','.service-card'],['#project-grid','.project-card'],['#process-list','.process-item'],['#benefits','.benefit-card'],['.about-values','[data-reveal]']];
- for(const [rootSelector,itemSelector] of groups){
-  const root=$(rootSelector);
-  if(!root)continue;
-  $$(itemSelector,root).forEach((node,index)=>{
-   node.style.setProperty('--reveal-delay',String(Math.min(index,4)*85)+'ms');
-  });
+function configureStagger(){
+ const layouts=[['#services-grid','.service-card'],['#project-grid','.project-card'],['#process-list','.process-item'],['#benefits','.benefit-card'],['.about-values','[data-reveal]']];
+ for(const [selector,childSelector] of layouts){
+  const parent=$(selector);
+  if(!parent)continue;
+  $$(childSelector,parent).forEach((node,i)=>node.style.setProperty('--reveal-delay',Math.min(i,4)*110+'ms'));
  }
 }
-function scanReveals(){
- const visibleLimit=window.innerHeight*.92;
- for(const node of Array.from(pendingReveals)){
-  if(!node.isConnected){pendingReveals.delete(node);if(revealObserver)revealObserver.unobserve(node);continue}
-  const rect=node.getBoundingClientRect();
-  if(rect.bottom<0 || (rect.top<=visibleLimit && rect.bottom>=0))revealElement(node);
+function revealVisibleContent(){
+ const height=window.innerHeight;
+ for(const node of [...pendingRevealNodes]){
+  if(!node.isConnected){pendingRevealNodes.delete(node);revealObserver?.unobserve(node);continue}
+  const box=node.getBoundingClientRect();
+  // Reveals content after it reaches approximately three quarters of the viewport.
+  if(box.bottom<0||(box.top<height*.76&&box.bottom>0))revealDone(node);
  }
 }
-function scheduleRevealScan(){
- if(revealScanFrame || !pendingReveals.size)return;
- revealScanFrame=requestAnimationFrame(()=>{revealScanFrame=0;scanReveals()});
+function queueRevealCheck(){
+ if(revealFrame||!pendingRevealNodes.size)return;
+ revealFrame=requestAnimationFrame(()=>{revealFrame=0;revealVisibleContent()});
 }
-function observeReveals(){
- const targets=$$('[data-reveal]');
- revealStaggers();
- if(revealMedia.matches || !('IntersectionObserver' in window)){
-  targets.forEach(revealElement);
+function initializeReveals(){
+ configureStagger();
+ const enabled=animationAllowed();
+ document.documentElement.classList.toggle('reveal-ready',enabled);
+ if(motionButton){
+  motionButton.hidden=!motionPreference.matches||motionOverride;
+  motionButton.setAttribute('aria-hidden',String(motionButton.hidden));
+ }
+ const targets=allRevealTargets();
+ if(!enabled||!('IntersectionObserver' in window)){
+  pendingRevealNodes.forEach(node=>revealObserver?.unobserve(node));
+  pendingRevealNodes.clear();
   document.documentElement.classList.remove('reveal-ready');
   return;
  }
  if(!revealObserver)revealObserver=new IntersectionObserver(entries=>{
-  for(const entry of entries)if(entry.isIntersecting)revealElement(entry.target);
- },{threshold:.025,rootMargin:'0px 0px -8% 0px'});
- const visibleLimit=window.innerHeight*.92;
- for(const node of Array.from(pendingReveals)){
-  if(!node.isConnected){pendingReveals.delete(node);revealObserver.unobserve(node)}
- }
+  for(const entry of entries)if(entry.isIntersecting)revealDone(entry.target);
+ },{threshold:0,rootMargin:'0px 0px -24% 0px'});
+ const height=window.innerHeight;
  for(const node of targets){
   if(node.classList.contains('in-view'))continue;
-  if(node.dataset.revealId && revealedKeys.has(node.dataset.revealId)){revealElement(node);continue}
-  const rect=node.getBoundingClientRect();
-  if(rect.bottom<0 || (rect.top<=visibleLimit && rect.bottom>=0)){revealElement(node);continue}
-  if(!pendingReveals.has(node)){pendingReveals.add(node);revealObserver.observe(node)}
+  if(node.dataset.revealId&&permanentlyRevealed.has(node.dataset.revealId)){revealDone(node);continue}
+  const box=node.getBoundingClientRect();
+  // Existing content and anchor destinations are visible immediately on restore.
+  if(box.bottom<0||(box.top<height*.76&&box.bottom>0)){revealDone(node);continue}
+  if(!pendingRevealNodes.has(node)){pendingRevealNodes.add(node);revealObserver.observe(node)}
  }
- document.documentElement.classList.add('reveal-ready');
+ for(const node of [...pendingRevealNodes])if(!node.isConnected){pendingRevealNodes.delete(node);revealObserver.unobserve(node)}
 }
-window.addEventListener('scroll',scheduleRevealScan,{passive:true});
-window.addEventListener('resize',scheduleRevealScan,{passive:true});
-window.addEventListener('pageshow',()=>requestAnimationFrame(()=>{observeReveals();scanReveals()}));
-window.addEventListener('hashchange',()=>requestAnimationFrame(scanReveals));
-window.addEventListener('popstate',()=>requestAnimationFrame(scanReveals));
+window.addEventListener('scroll',queueRevealCheck,{passive:true});
+window.addEventListener('resize',queueRevealCheck,{passive:true});
+window.addEventListener('pageshow',()=>requestAnimationFrame(()=>{initializeReveals();revealVisibleContent()}));
+window.addEventListener('popstate',()=>requestAnimationFrame(revealVisibleContent));
+window.addEventListener('hashchange',()=>requestAnimationFrame(revealVisibleContent));
 document.addEventListener('focusin',event=>{
- const node=event.target.closest?.('[data-reveal]');
- if(node)revealElement(node);
+ const focused=event.target.closest?.('[data-reveal]');
+ if(focused)revealDone(focused);
 });
-if(revealMedia.addEventListener)revealMedia.addEventListener('change',()=>{
- if(revealMedia.matches){pendingReveals.forEach(revealElement);document.documentElement.classList.remove('reveal-ready')}
- else observeReveals();
+if(motionPreference.addEventListener)motionPreference.addEventListener('change',initializeReveals);
+if(motionButton)motionButton.addEventListener('click',()=>{
+ motionOverride=true;
+ // Content already encountered must not disappear when opting in.
+ const limit=window.innerHeight;
+ allRevealTargets().forEach(node=>{
+  const box=node.getBoundingClientRect();
+  if(box.top<limit||box.bottom<0)revealDone(node);
+ });
+ initializeReveals();
+ motionButton.hidden=true;
 });
+function observeReveals(){initializeReveals()}
 // Project case study dialog and gallery.
 const backdrop=$('#case-modal'),modal=$('.modal',backdrop),modalContent=$('#modal-content'),modalClose=$('#modal-close');
 function getFocusable(){return $$('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled])',modal).filter(n=>n.getClientRects().length>0)}
