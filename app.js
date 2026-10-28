@@ -64,7 +64,7 @@ function revealStaggers(){
  for(const [rootSelector,itemSelector] of groups){
   const root=$(rootSelector);
   if(!root)continue;
-  $(itemSelector,root).forEach((node,index)=>{
+  $$(itemSelector,root).forEach((node,index)=>{
    node.style.setProperty('--reveal-delay',String(Math.min(index,4)*85)+'ms');
   });
  }
@@ -82,7 +82,7 @@ function scheduleRevealScan(){
  revealScanFrame=requestAnimationFrame(()=>{revealScanFrame=0;scanReveals()});
 }
 function observeReveals(){
- const targets=$('[data-reveal]');
+ const targets=$$('[data-reveal]');
  revealStaggers();
  if(revealMedia.matches || !('IntersectionObserver' in window)){
   targets.forEach(revealElement);
