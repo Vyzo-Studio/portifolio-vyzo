@@ -20,7 +20,7 @@ window.addEventListener('resize',()=>{if(innerWidth>1000)closeMenu()},{passive:t
 // Semantic services from the single content source.
 const serviceGrid=$('#services-grid');
 data.services.forEach(s=>{
- const card=el('article','service-card');card.dataset.reveal='';
+ const card=el('article','service-card');card.dataset.reveal='';card.dataset.revealId='service:'+s.id;
  const top=el('div','service-top');top.append(el('span','service-icon',s.icon));
  const title=el('h3','',s.title),desc=el('p','',s.description),tags=el('div','service-tags');
  s.tags.forEach(tag=>tags.append(el('span','',tag)));
@@ -33,7 +33,7 @@ const grid=$('#project-grid');
 function makeImage(src,alt){const img=el('img');img.src=src;img.alt=alt;img.loading='lazy';img.decoding='async';img.onerror=()=>{img.hidden=true;const fallback=img.parentElement?.querySelector('.media-fallback');if(fallback)fallback.style.display='flex'};return img}
 function renderProjects(){grid.replaceChildren();const filtered=data.projects.filter(p=>state.filter==='todos'||p.filter.includes(state.filter));
  filtered.forEach(p=>{
- const card=el('article','project-card');card.dataset.project=p.id;card.dataset.reveal='';
+ const card=el('article','project-card');card.dataset.project=p.id;card.dataset.reveal='';card.dataset.revealId='project:'+p.id;
  const trigger=el('button','project-media');trigger.type='button';trigger.setAttribute('aria-label',`Ver detalhes do projeto ${p.title}`);trigger.style.width='100%';trigger.style.border='0';trigger.style.padding='0';trigger.style.textAlign='left';trigger.style.cursor='pointer';
  const img=makeImage(p.cover,p.alt);const fallback=el('span','media-fallback');fallback.style.setProperty('--fall',p.color);fallback.append(el('span','','VYZO / PROJETOS'),el('strong','',p.title));
  const open=el('span','project-open-icon','↗');open.setAttribute('aria-hidden','true');const label=el('span','project-label',p.label);trigger.append(img,fallback,label,open);trigger.addEventListener('click',()=>openProject(p.id,trigger));
@@ -42,13 +42,82 @@ function renderProjects(){grid.replaceChildren();const filtered=data.projects.fi
  observeReveals();
 }
 $$('.filter').forEach(btn=>btn.addEventListener('click',()=>{state.filter=btn.dataset.filter;$$('.filter').forEach(b=>{const active=b===btn;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active))});renderProjects();}));
-const proc=$('#process-list');data.process.forEach(step=>{const item=el('article','process-item');item.dataset.reveal='';item.append(el('h3','',step.name),el('p','',step.text),el('span','stage-arrow','↗'));proc.append(item)});
-const benefits=$('#benefits');data.benefits.forEach(benefit=>{const card=el('article','benefit-card');card.dataset.reveal='';card.append(el('span','benefit-mark',benefit.icon),el('h3','',benefit.title),el('p','',benefit.text));benefits.append(card)});
-let observer;
-function observeReveals(){if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){$$('[data-reveal]').forEach(n=>n.classList.add('in-view'));return}if(!('IntersectionObserver' in window)){$$('[data-reveal]').forEach(n=>n.classList.add('in-view'));return}
- if(!observer)observer=new IntersectionObserver(entries=>{for(const e of entries)if(e.isIntersecting){e.target.classList.add('in-view');observer.unobserve(e.target)}},{threshold:.08,rootMargin:'0px 0px -22px 0px'});
- $$('[data-reveal]:not(.in-view)').forEach(n=>observer.observe(n));
+const proc=$('#process-list');data.process.forEach(step=>{const item=el('article','process-item');item.dataset.reveal='';item.dataset.revealId='process:'+step.name;item.append(el('h3','',step.name),el('p','',step.text),el('span','stage-arrow','↗'));proc.append(item)});
+const benefits=$('#benefits');data.benefits.forEach(benefit=>{const card=el('article','benefit-card');card.dataset.reveal='';card.dataset.revealId='benefit:'+benefit.title;card.append(el('span','benefit-mark',benefit.icon),el('h3','',benefit.title),el('p','',benefit.text));benefits.append(card)});
+// VYZO Cinematic Reveal: elementos revelados jamais retornam ao estado inicial.
+const revealMedia=window.matchMedia('(prefers-reduced-motion: reduce)');
+const revealedKeys=new Set();
+const pendingReveals=new Set();
+let revealObserver=null;
+let revealScanFrame=0;
+function revealElement(node){
+ if(!node || !node.isConnected)return;
+ const key=node.dataset.revealId;
+ if(key)revealedKeys.add(key);
+ node.dataset.revealState='revealed';
+ node.classList.add('in-view');
+ pendingReveals.delete(node);
+ if(revealObserver)revealObserver.unobserve(node);
 }
+function revealStaggers(){
+ const groups=[['#services-grid','.service-card'],['#project-grid','.project-card'],['#process-list','.process-item'],['#benefits','.benefit-card'],['.about-values','[data-reveal]']];
+ for(const [rootSelector,itemSelector] of groups){
+  const root=$(rootSelector);
+  if(!root)continue;
+  $(itemSelector,root).forEach((node,index)=>{
+   node.style.setProperty('--reveal-delay',String(Math.min(index,4)*85)+'ms');
+  });
+ }
+}
+function scanReveals(){
+ const visibleLimit=window.innerHeight*.92;
+ for(const node of Array.from(pendingReveals)){
+  if(!node.isConnected){pendingReveals.delete(node);if(revealObserver)revealObserver.unobserve(node);continue}
+  const rect=node.getBoundingClientRect();
+  if(rect.bottom<0 || (rect.top<=visibleLimit && rect.bottom>=0))revealElement(node);
+ }
+}
+function scheduleRevealScan(){
+ if(revealScanFrame || !pendingReveals.size)return;
+ revealScanFrame=requestAnimationFrame(()=>{revealScanFrame=0;scanReveals()});
+}
+function observeReveals(){
+ const targets=$('[data-reveal]');
+ revealStaggers();
+ if(revealMedia.matches || !('IntersectionObserver' in window)){
+  targets.forEach(revealElement);
+  document.documentElement.classList.remove('reveal-ready');
+  return;
+ }
+ if(!revealObserver)revealObserver=new IntersectionObserver(entries=>{
+  for(const entry of entries)if(entry.isIntersecting)revealElement(entry.target);
+ },{threshold:.025,rootMargin:'0px 0px -8% 0px'});
+ const visibleLimit=window.innerHeight*.92;
+ for(const node of Array.from(pendingReveals)){
+  if(!node.isConnected){pendingReveals.delete(node);revealObserver.unobserve(node)}
+ }
+ for(const node of targets){
+  if(node.classList.contains('in-view'))continue;
+  if(node.dataset.revealId && revealedKeys.has(node.dataset.revealId)){revealElement(node);continue}
+  const rect=node.getBoundingClientRect();
+  if(rect.bottom<0 || (rect.top<=visibleLimit && rect.bottom>=0)){revealElement(node);continue}
+  if(!pendingReveals.has(node)){pendingReveals.add(node);revealObserver.observe(node)}
+ }
+ document.documentElement.classList.add('reveal-ready');
+}
+window.addEventListener('scroll',scheduleRevealScan,{passive:true});
+window.addEventListener('resize',scheduleRevealScan,{passive:true});
+window.addEventListener('pageshow',()=>requestAnimationFrame(()=>{observeReveals();scanReveals()}));
+window.addEventListener('hashchange',()=>requestAnimationFrame(scanReveals));
+window.addEventListener('popstate',()=>requestAnimationFrame(scanReveals));
+document.addEventListener('focusin',event=>{
+ const node=event.target.closest?.('[data-reveal]');
+ if(node)revealElement(node);
+});
+if(revealMedia.addEventListener)revealMedia.addEventListener('change',()=>{
+ if(revealMedia.matches){pendingReveals.forEach(revealElement);document.documentElement.classList.remove('reveal-ready')}
+ else observeReveals();
+});
 // Project case study dialog and gallery.
 const backdrop=$('#case-modal'),modal=$('.modal',backdrop),modalContent=$('#modal-content'),modalClose=$('#modal-close');
 function getFocusable(){return $$('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled])',modal).filter(n=>n.getClientRects().length>0)}
