@@ -18,10 +18,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20261028-cinematic-v4">
+  <link rel="stylesheet" href="styles.css?v=20261028-cinema-stable">
   <title>VYZO Studio — Design & Soluções Digitais</title>
   <script src="data.js" defer></script>
-  <script src="app.js?v=20261028-cinematic-v4" defer></script>
+  <script src="app.js?v=20261028-cinema-stable" defer></script>
 </head>
 <body>
 <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
@@ -109,5 +109,142 @@
 <footer class="footer"><div class="shell"><div class="footer-main" data-reveal><div class="footer-brand"><a class="brand" href="#topo"><img src="assets/vyzo-logo.webp" alt="VYZO" width="175" height="46"><span>STUDIO</span></a><p>Design com assinatura,<br>não com fórmula.</p></div><div class="footer-col"><strong>EXPLORAR</strong><a href="#sobre">O estúdio</a><a href="#servicos">Serviços</a><a href="#portfolio">Projetos</a><a href="#processo">Processo</a></div><div class="footer-col"><strong>CONTATO</strong><a href="https://www.instagram.com/vyzo_std/" target="_blank" rel="noopener noreferrer">Instagram ↗</a><a href="https://ig.me/m/vyzo_std" target="_blank" rel="noopener noreferrer">Enviar um Direct ↗</a><a href="#contato">Solicitar projeto ↗</a></div><div class="footer-right"><span>SEMPRE EM MOVIMENTO.</span><b>IDEIAS <i>↗</i><br>QUE MARCAM.</b></div></div><div class="footer-bottom"><span>© <span id="year">2026</span> VYZO STUDIO. TODOS OS DIREITOS RESERVADOS.</span><div><a href="privacidade.html">Privacidade</a><a href="termos.html">Termos de uso</a></div><span>FEITO COM INTENÇÃO. ✳</span></div></div></footer>
 <div class="modal-backdrop" id="case-modal" hidden><div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" tabindex="-1"><button class="modal-close" type="button" id="modal-close" aria-label="Fechar projeto">✕</button><div id="modal-content"></div></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<!-- Independent cinematic reveal: safely runs even if the catalog script has an error. -->
+<script>
+(function () {
+  'use strict';
+  function start() {
+    const root = document.documentElement;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const toggle = document.getElementById('enable-motion');
+    const params = new URLSearchParams(location.search);
+    let optedIn = params.get('animacoes') === '1';
+    const knownNodes = new WeakSet();
+    const finishedNodes = new WeakSet();
+    const finishedIds = new Set();
+    const waiting = new Set();
+    const triggers = ['[data-reveal]'];
+    let rafId = 0;
+    let io;
+    let mo;
+
+    function enabled() { return !reduced.matches || optedIn; }
+    function finish(node) {
+      if (!node || !node.isConnected) return;
+      finishedNodes.add(node);
+      if (node.dataset.revealId) finishedIds.add(node.dataset.revealId);
+      node.dataset.cinema = 'visible';
+      node.classList.add('in-view');
+      waiting.delete(node);
+      io?.unobserve(node);
+    }
+    function initialVisible(node) {
+      const rect = node.getBoundingClientRect();
+      return rect.bottom < 0 || (rect.top < window.innerHeight * .72 && rect.bottom >= 0);
+    }
+    function collect() {
+      if (!enabled()) return 0;
+      const nodes = document.querySelectorAll(triggers.join(','));
+      let found = 0;
+      nodes.forEach(node => {
+        if (knownNodes.has(node)) return;
+        found++;
+        knownNodes.add(node);
+        if (node.dataset.revealId && finishedIds.has(node.dataset.revealId)) {
+          finish(node);
+          return;
+        }
+        if (initialVisible(node)) {
+          finish(node);
+          return;
+        }
+        node.dataset.cinema = 'pending';
+        const parent = node.parentElement;
+        if (parent?.id === 'services-grid' || parent?.id === 'process-list' || parent?.id === 'project-grid' || parent?.id === 'benefits' || parent?.classList.contains('about-values')) {
+          const siblings = [...parent.children].filter(el => el.matches('[data-reveal]'));
+          node.style.setProperty('--cinema-delay', Math.min(siblings.indexOf(node) % 4, 3) * 95 + 'ms');
+        }
+        waiting.add(node);
+        io?.observe(node);
+      });
+      return found;
+    }
+    function syncViewport() {
+      rafId = 0;
+      if (!enabled()) return;
+      const limit = window.innerHeight * .72;
+      for (const node of [...waiting]) {
+        if (!node.isConnected) {
+          waiting.delete(node);
+          io?.unobserve(node);
+          continue;
+        }
+        const rect = node.getBoundingClientRect();
+        if (rect.top <= limit && rect.bottom >= 0 || rect.bottom < 0) finish(node);
+      }
+    }
+    function requestSync() {
+      if (!rafId && waiting.size) rafId = requestAnimationFrame(syncViewport);
+    }
+    function syncMode() {
+      const active = enabled();
+      root.classList.toggle('cinema-enabled', active);
+      root.classList.toggle('cinema-override', optedIn);
+      root.dataset.cinemaMode = active ? (optedIn ? 'opt-in' : 'enabled') : 'reduced';
+      if (toggle) {
+        toggle.hidden = !reduced.matches || optedIn;
+        toggle.setAttribute('aria-hidden', String(toggle.hidden));
+      }
+      if (!active) {
+        [...waiting].forEach(finish);
+      } else collect();
+    }
+
+    io = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+      if (!enabled()) return;
+      entries.forEach(entry => { if (entry.isIntersecting) finish(entry.target); });
+    }, { rootMargin: '0px 0px -28% 0px', threshold: 0 }) : null;
+    if (!io) optedIn = false;
+    syncMode();
+    // New project cards are rebuilt on every filter click.
+    mo = new MutationObserver(() => { collect(); requestSync(); });
+    ['services-grid', 'project-grid', 'process-list', 'benefits'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) mo.observe(el, { childList: true });
+    });
+    window.addEventListener('scroll', requestSync, { passive: true });
+    window.addEventListener('resize', requestSync, { passive: true });
+    window.addEventListener('pageshow', () => { collect(); requestSync(); });
+    window.addEventListener('hashchange', requestSync);
+    window.addEventListener('popstate', requestSync);
+    document.addEventListener('focusin', e => {
+      let node = e.target.closest?.('[data-reveal]');
+      if (node) finish(node);
+    });
+    if (reduced.addEventListener) reduced.addEventListener('change', syncMode);
+    if (toggle) toggle.addEventListener('click', () => {
+      optedIn = true;
+      // Previously encountered content must stay visible when switching modes.
+      document.querySelectorAll('[data-reveal]').forEach(el => {
+        const r = el.getBoundingClientRect();
+        if (r.top < window.innerHeight || r.bottom < 0) finish(el);
+      });
+      syncMode();
+      toggle.hidden = true;
+    });
+    // Exposes passive diagnostic counters for QA in DevTools.
+    window.__vyzoCinema = {
+      status: () => ({ enabled: enabled(), reduced: reduced.matches, optedIn,
+        waiting: waiting.size, completed: finishedIds.size,
+        targets: document.querySelectorAll('[data-reveal]').length,
+        mode: root.dataset.cinemaMode }),
+      refresh: () => { collect(); requestSync(); }
+    };
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
+  else start();
+})();
+</script>
 </body>
 </html>
