@@ -1,0 +1,36 @@
+name: Verificação visual e funcional VYZO
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'app.js'
+      - 'styles.css'
+      - 'data.js'
+      - 'qa/**'
+      - '.github/workflows/qa-v5.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  visual-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar Playwright
+        run: |
+          npm install --no-save @playwright/test@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Iniciar servidor estático
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/vyzo-http.log 2>&1 &
+          sleep 2
+      - name: Testar funções e 10 resoluções
+        run: npx playwright test qa/v5.smoke.spec.cjs --project=chromium --reporter=line --workers=1
+      - name: Arquivos do servidor em caso de falha
+        if: failure()
+        run: cat /tmp/vyzo-http.log || true
