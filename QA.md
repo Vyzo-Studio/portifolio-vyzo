@@ -29,3 +29,17 @@ renderização visual precisam ser verificadas na versão resultante.
 
 O formulário não envia dados automaticamente para um backend; o usuário copia o briefing
 e decide se deseja encaminhá-lo pelo Instagram.
+
+
+## Evolução V5 — checklist de regressão
+
+- Baseline antes das alterações: `8b9029fcf7c8e9732a203d3ddd5f9245c8aaa380`
+- [ ] Carrossel: 4 itens, setas, indicadores, arraste, teclado, limites e pré-seleção do serviço.
+- [ ] Processo: 6 seletores com painel comum, clique e setas de teclado.
+- [ ] Briefing: prazo inexistente em HTML, JS e resumo; validação, cópia e Direct preservados.
+- [ ] Portfólio: filtros, imagens não cortadas, modal, foco e navegação.
+- [ ] Animação: módulo cinematográfico independente funcional, sem repetição de entrada.
+- [ ] Mobile: larguras de 320 a 1920px, sem rolagem horizontal na página.
+- [ ] Política: nenhum material de cliente não autorizado publicado.
+- [ ] GitHub Pages: workflow de publicação concluído.
+

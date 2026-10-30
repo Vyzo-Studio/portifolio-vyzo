@@ -35,3 +35,14 @@ Não existe envio automático a um servidor nem armazenagem de briefing pelo sit
 
 O workflow `.github/workflows/pages.yml` publica o site estático da branch `main`.
 GitHub Pages deve estar configurado para publicar via **GitHub Actions**.
+
+
+## Evolução V5 — navegação e componentes
+
+- Ponto de recuperação anterior à V5: commit `8b9029fcf7c8e9732a203d3ddd5f9245c8aaa380`.
+- Serviços: carrossel manual com CSS scroll-snap, botões anteriores/próximos, indicadores, rolagem por toque e teclado. A opção de serviço continua preparando o briefing.
+- Processo: mapa interativo das seis etapas com um único painel de descrição, sem carrossel e sem novas etapas.
+- Briefing: removido permanentemente o campo de prazo; nenhum formulário envia dados ao servidor.
+- Portfólio: imagens inteiras nos cards e nos detalhes; somente materiais próprios e estudos autorais identificados.
+- Revelação cinematográfica: módulo independente preservado no index.html.
+
