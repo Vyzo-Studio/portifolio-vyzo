@@ -34,12 +34,18 @@ e decide se deseja encaminhá-lo pelo Instagram.
 ## Evolução V5 — checklist de regressão
 
 - Baseline antes das alterações: `8b9029fcf7c8e9732a203d3ddd5f9245c8aaa380`
-- [ ] Carrossel: 4 itens, setas, indicadores, arraste, teclado, limites e pré-seleção do serviço.
-- [ ] Processo: 6 seletores com painel comum, clique e setas de teclado.
-- [ ] Briefing: prazo inexistente em HTML, JS e resumo; validação, cópia e Direct preservados.
-- [ ] Portfólio: filtros, imagens não cortadas, modal, foco e navegação.
-- [ ] Animação: módulo cinematográfico independente funcional, sem repetição de entrada.
-- [ ] Mobile: larguras de 320 a 1920px, sem rolagem horizontal na página.
-- [ ] Política: nenhum material de cliente não autorizado publicado.
-- [ ] GitHub Pages: workflow de publicação concluído.
+- [x] Carrossel: 4 itens, setas, indicadores, teclado, limites e pré-seleção do serviço. (Arraste: suportado nativamente por CSS, sem teste automatizado de gesto físico.)
+- [x] Processo: 6 seletores com painel comum, clique e setas de teclado.
+- [x] Briefing: prazo inexistente em HTML, JS e resumo; validação, geração de texto e link do Direct verificados. (A API de transferência real da área de transferência não foi exercitada.)
+- [x] Portfólio: filtros, modal, abertura e fechamento verificados. A exibição completa de imagens foi ajustada em CSS; inspeção visual por capturas não incluída na suíte.
+- [x] Animação: módulo cinematográfico preservado; teste de revelação única ao voltar ao topo aprovado.
+- [x] Mobile/responsividade: 320, 360, 375, 390, 430, 768, 1024, 1366, 1440 e 1920 px sem overflow horizontal nem erros JavaScript detectados.
+- [x] Política: sem nomes de clientes não autorizados nos arquivos de código inspecionados nesta atualização.
+- [x] GitHub Pages: workflow de publicação conferido no GitHub Actions.
 
+
+### Evidência de execução V5
+
+- GitHub Actions: [Verificação visual e funcional VYZO](https://github.com/Vyzo-Studio/portifolio-vyzo/actions/runs/40995019307), 16 testes Chromium aprovados (19 s de execução).
+- O teste usa um servidor estático local com os arquivos atuais do próprio commit no GitHub Actions.
+- Restrições: não prova métricas comerciais, aprovação de design por clientes, impressão em dispositivos físicos nem inspeção do endereço público em navegador remoto. As animações também obedecem a preferência do sistema por movimento reduzido, salvo ativação explícita.
